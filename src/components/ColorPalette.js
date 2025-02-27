@@ -6,7 +6,7 @@ import CloseIcon from '@mui/icons-material/Close';
 
 import "react-color-palette/css";
 
-export default function ColorPalette({ color, setColor, setButtonOpen}) {
+export default function ColorPalette({ color, setColor, setButtonOpen }) {
 
   return (
     <div className="w-64 bottom-5 right-5 fixed">

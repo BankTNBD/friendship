@@ -4,17 +4,18 @@ import React, { useState, useRef, useEffect } from "react";
 import { Stage, Layer, Line } from "react-konva";
 import { useColor } from "react-color-palette";
 import Tools from "@/components/Tools";
-import { Button } from "@mui/material";
+import Button from "@mui/material/Button";
 import Swal from "sweetalert2";
-import withReactContent from 'sweetalert2-react-content'
-import { redirect } from 'next/navigation'
+import withReactContent from 'sweetalert2-react-content';
+import { redirect } from 'next/navigation';
+
+import { canvas } from "@/app/resources/content";
 
 export default function Page() {
-  const MySwal = withReactContent(Swal)
+  const MySwal = withReactContent(Swal);
   const [tool, setTool] = useState("pen");
   const [lines, setLines] = useState([]);
   const [color, setColor] = useColor("#000000");
-  const [undoStack, setUndoStack] = useState([]);
   const isDrawing = useRef(false);
   const stageRef = useRef(null);
   const [canvasSize, setCanvasSize] = useState({ width: 800, height: 800 });
@@ -52,60 +53,49 @@ export default function Page() {
 
   const handleUndo = () => {
     if (lines.length === 0) return;
-    const newLines = [...lines];
-    const lastLine = newLines.pop();
-    setUndoStack((prevStack) => [...prevStack, lastLine]);
-    setLines(newLines);
+    setLines((prevLines) => prevLines.slice(0, -1));
   };
 
   const handleClear = () => {
-    setUndoStack([]);
     setLines([]);
   };
 
   const handleSend = async () => {
     if (!stageRef.current) return;
 
-    // Convert canvas to image (Base64)
     const uri = stageRef.current.toDataURL({ mimeType: "image/png" });
-
-    // Convert Base64 to Blob
     const response = await fetch(uri);
     const blob = await response.blob();
     const file = new File([blob], "drawing.png", { type: "image/png" });
-
-    // Create FormData to send file
     const formData = new FormData();
     formData.append("file", file);
 
-    // Send image to Express server
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/upload`, {
         method: "POST",
         body: formData,
       });
 
-      const data = await res.json();
       if (res.ok) {
         MySwal.fire({
           icon: "success",
-          title: "ส่ง friendship สำเร็จ",
-          text: "ขอบคุณน้าาา จะร้องไห้ 🥹",
+          title: canvas.alert.success.title,
+          text: canvas.alert.success.text,
         }).then(() => {
           redirect('/');
         });
       } else {
         MySwal.fire({
           icon: "error",
-          title: "ส่งข้อความไม่ได้อ่า",
-          text: "ทักมาบอกที",
+          title: canvas.alert.error.title,
+          text: canvas.alert.error.text,
         });
       }
     } catch (error) {
       MySwal.fire({
         icon: "error",
-        title: "ส่งข้อความไม่ได้อ่า",
-        text: "ทักมาบอกที",
+        title: canvas.alert.error.title,
+        text: canvas.alert.error.text,
       });
     }
   };
@@ -123,7 +113,6 @@ export default function Page() {
         onTouchMove={handleMouseMove}
         onTouchEnd={handleMouseUp}
         style={{ border: "1px solid black" }}
-
       >
         <Layer>
           {lines.map((line, i) => (
@@ -141,7 +130,7 @@ export default function Page() {
         </Layer>
       </Stage>
       <Tools undo={handleUndo} clear={handleClear} color={color} setColor={setColor} tool={tool} setTool={setTool} />
-      <Button variant="contained" color="success" onClick={handleSend}>ส่ง</Button>
+      <Button variant="contained" color="success" onClick={handleSend}>{canvas.button}</Button>
     </div>
   );
 }

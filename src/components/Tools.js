@@ -8,26 +8,34 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Tooltip from '@mui/material/Tooltip';
 import UndoIcon from '@mui/icons-material/Undo';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import Button from '@mui/material/Button';
 import DrawIcon from '@mui/icons-material/Draw';
 import BackspaceIcon from '@mui/icons-material/Backspace';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
+import Swal from "sweetalert2";
+import withReactContent from 'sweetalert2-react-content'
 import ColorPalette from "./ColorPalette";
 
+import { tools } from "@/app/resources/content";
+
 export default function Tools({ undo, clear, color, setColor, tool, setTool }) {
+    const MySwal = withReactContent(Swal)
     const [buttonOpen, setButtonOpen] = useState(false);
-    const [openConfirm, setOpenConfirm] = useState(false);
 
     const handleTool = (event, newTool) => {
         setTool(newTool);
     };
 
     const handleClear = () => {
-        openConfirm ? setOpenConfirm(false) : setOpenConfirm(true);
+        MySwal.fire({
+            icon: "warning",
+            title: tools.alert.confirm.title,
+            text: tools.alert.confirm.text,
+            showCancelButton: true,
+          }).then((result) => {
+            if (result.isConfirmed) {
+              clear();
+            }
+          }
+        );
     };
 
         return (
@@ -42,12 +50,12 @@ export default function Tools({ undo, clear, color, setColor, tool, setTool }) {
                 >
                     <ToggleButtonGroup>
                         <ToggleButton onClick={undo}>
-                            <Tooltip title="ย้อนกลับ">
+                            <Tooltip title={tools.undo}>
                                 <UndoIcon />
                             </Tooltip>
                         </ToggleButton>
                         <ToggleButton onClick={handleClear}>
-                            <Tooltip title="ล้าง">
+                            <Tooltip title={tools.clear}>
                                 <DeleteForeverIcon />
                             </Tooltip>
                         </ToggleButton>
@@ -60,39 +68,18 @@ export default function Tools({ undo, clear, color, setColor, tool, setTool }) {
                         onChange={handleTool}
                     >
                         <ToggleButton value="eraser">
-                            <Tooltip title="ลบ">
+                            <Tooltip title={tools.eraser}>
                                 <BackspaceIcon />
                             </Tooltip>
                         </ToggleButton>
                         <ToggleButton value="pen" onClick={() => setButtonOpen(!buttonOpen)} >
-                            <Tooltip title="วาด">
+                            <Tooltip title={tools.pen}>
                                 <DrawIcon />
                             </Tooltip>
                         </ToggleButton>
                     </ToggleButtonGroup>
                 </Paper>
                 {buttonOpen && <ColorPalette color={color} setColor={setColor} setButtonOpen={setButtonOpen} />}
-                <Dialog
-                    open={openConfirm}
-                >
-                    <DialogTitle>
-                        {"คุณแน่ใจหรือไม่?"}
-                    </DialogTitle>
-                    <DialogContent>
-                        <DialogContentText>
-                            คุณแน่ใจหรือไม่ที่จะลบทุกอย่าง?
-                        </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={handleClear}>ยกเลิก</Button>
-                        <Button onClick={() => {
-                            clear();
-                            setOpenConfirm(false);
-                        }} autoFocus>
-                            แน่ใจ
-                        </Button>
-                    </DialogActions>
-                </Dialog>
             </div>
         );
     }

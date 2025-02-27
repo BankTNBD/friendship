@@ -1,22 +1,24 @@
 "use client";
 
-import TextField from "@mui/material/TextField";
-import { Button } from "@mui/material";
-import Swal from "sweetalert2";
-import withReactContent from 'sweetalert2-react-content'
 import { useState } from "react";
-import { redirect } from 'next/navigation'
+import { redirect } from 'next/navigation';
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import Swal from "sweetalert2";
+import withReactContent from 'sweetalert2-react-content';
+
+import { write } from "@/app/resources/content";
 
 export default function Page() {
-    const [message, setMessage] = useState("To แบงก์");
-    const MySwal = withReactContent(Swal)
+    const [message, setMessage] = useState(write.default);
+    const MySwal = withReactContent(Swal);
 
     const handleSend = async () => {
         if (!message.trim()) {
             MySwal.fire({
                 icon: "error",
-                title: "อุ้ย!!",
-                text: "กรุณาระบุข้อความ",
+                title: write.alert.empty.title,
+                text: write.alert.empty.text,
             });
             return;
         }
@@ -28,45 +30,44 @@ export default function Page() {
                 body: JSON.stringify({ message }),
             });
 
-            const data = await res.json();
             if (res.ok) {
                 MySwal.fire({
                     icon: "success",
-                    title: "ส่งข้อความสำเร็จ",
-                    text: "ขอบคุณน้าาา จะร้องไห้ 🥹",
+                    title: write.alert.success.title,
+                    text: write.alert.success.text,
                 }).then(() => {
                     redirect('/');
                 });
             } else {
                 MySwal.fire({
                     icon: "error",
-                    title: "ส่งข้อความไม่ได้อ่า",
-                    text: "ทักมาบอกที",
+                    title: write.alert.error.title,
+                    text: write.alert.error.text,
                 });
             }
         } catch (error) {
             MySwal.fire({
                 icon: "error",
-                title: "ส่งข้อความไม่ได้อ่า",
-                text: "ทักมาบอกที",
+                title: write.alert.error.title,
+                text: write.alert.error.text,
             });
         }
     };
 
     return (
-        <div className="flex flex-col justify-center items-center h-auto mt-10">
-            <TextField
-                id="outlined-multiline-static"
-                label="ข้อความ"
-                multiline
-                rows={20}
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                className="w-10/12 m-5"
-            />
-            <Button variant="contained" color="success" onClick={handleSend}>
-                ส่ง
-            </Button>
+        <div className="p-5">
+            <div className="flex flex-col justify-center items-center text-center w-full">
+                <TextField
+                    id="outlined-multiline-static"
+                    label={write.label}
+                    multiline
+                    rows={20}
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    className="w-10/12 m-10"
+                />
+                <Button variant="contained" color="success" onClick={handleSend} className="m-5">{write.button}</Button>
+            </div>
         </div>
     );
 }

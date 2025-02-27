@@ -1,19 +1,16 @@
 "use client";
 
-import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { usePathname } from "next/navigation";
 import Box from '@mui/material/Box';
 import BottomNavigation from '@mui/material/BottomNavigation';
 import BottomNavigationAction from '@mui/material/BottomNavigationAction';
-import RestoreIcon from '@mui/icons-material/Restore';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
 import HomeIcon from '@mui/icons-material/Home';
 import DrawIcon from '@mui/icons-material/Draw';
 import ArticleIcon from '@mui/icons-material/Article';
 
 export default function Nav() {
-    const [value, setValue] = React.useState(0);
+    const [value, setValue] = useState(0);
     const pathname = usePathname();
 
     const handlePath = () => {
@@ -26,7 +23,7 @@ export default function Nav() {
         }
     };
 
-    React.useEffect(() => {
+    useEffect(() => {
         handlePath();
     }, []);
 

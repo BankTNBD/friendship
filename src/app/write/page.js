@@ -54,7 +54,7 @@ export default function Page() {
     };
 
     return (
-        <div className="flex flex-col justify-start items-center h-auto">
+        <div className="flex flex-col justify-center items-center h-auto mt-10">
             <TextField
                 id="outlined-multiline-static"
                 label="ข้อความ"

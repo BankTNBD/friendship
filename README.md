@@ -23,7 +23,7 @@ A website for receiving Friendship messages from friends, supporting both drawin
 1. Clone the repository:
 
 ```sh
-git clone https://github.com/your-username/friendship.git
+git clone https://github.com/BankTNBD/friendship.git
 cd friendship
 ```
 
@@ -36,6 +36,10 @@ yarn install
 ```
 
 3. Create a `.env.local` file based on `.env.local.sample` and set the required environment variables.
+
+### Customization
+
+You can customize the content on this website by modifying the `src/resources/content.js` file.
 
 ## Running the Development Server
 
